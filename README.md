@@ -6,7 +6,7 @@ A statistical framework designed to assess the reproducibility of Hi-C chromatin
 1. Install the package from Github:
  
 ```r
-devtools::install_github("Chen-Xue12/SIDR")
+devtools::install_github("qunhualilab/SIDR")
 ```
 2. Install the package from source:
 
