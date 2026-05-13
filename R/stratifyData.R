@@ -14,13 +14,18 @@
 #' indices of that stratum.
 #'
 #' @examples
-#' \dontrun{
+#' set.seed(1)    # uses random jitter
+#' rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
+#' rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
+#'
 #' # Merge Hi-C replicates
-#' data <- mergeHiC("rep1.txt", "rep2.txt", chrI = "chr18", chrJ = "chr18")
+#' hic_data <- mergeHiC(rep1, rep2, chrI = "chr18", chrJ = "chr18")
+#'
+#' # Decide the number of strata
+#' K <- determineK(hic_data, max_ns = 10, corr_threshold = 0.1)
 #'
 #' # Stratify data
-#' stratified_indices <- stratifyData(hic_data, ns = 3)
-#' }
+#' ind <- stratifyData(hic_data, ns = K)
 #'
 #' @export
 stratifyData <- function(hic_data, ns){
@@ -59,4 +64,6 @@ stratifyData <- function(hic_data, ns){
 
   return(ind)
 }
+
+
 
