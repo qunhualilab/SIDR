@@ -25,7 +25,7 @@
 #'   \item The next element: correlation coefficient of the irreproducible
 #'   component (\eqn{\rho});
 #'   \item The final \code{ns} elements: correlation scaling parameters of the
-#'   reproducible component(\eqn{\omega_k}).
+#'   reproducible component (\eqn{\omega_k}).
 #' }
 #'
 #' @return A single numeric value specifying the total log-likelihood
