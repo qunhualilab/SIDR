@@ -3,7 +3,7 @@ Type: Package
 Title: Stratified Irreproducible Discovery Rate (SIDR) for Hi-C Data
 Version: 1.0
 Authors@R: 
-    person("Chen", "Xue", email = "cux12@psu.edu", role = c("aut", "cre"))
+    person("Chen", "Xue", email = "stanxuechen@gmail.com", role = c("aut", "cre"))
 Description: Implements the Stratified Irreproducible Discovery Rate (SIDR) 
   model for assessing reproducibility of replcate Hi-C data.
 License: GPL (>= 2.0)
