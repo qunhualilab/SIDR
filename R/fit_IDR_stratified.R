@@ -48,20 +48,25 @@
 #' \url{https://bioconductor.org/packages/release/bioc/html/idr.html}
 #'
 #' @examples
-#' \dontrun{
+#' set.seed(1)    # uses random jitter
+#' rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
+#' rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
+#'
 #' # Merge Hi-C replicates
-#' data <- mergeHiC("rep1.txt", "rep2.txt", chrI = "chr18", chrJ = "chr18")
+#' hic_data <- mergeHiC(rep1, rep2, chrI = "chr18", chrJ = "chr18")
+#'
+#' # Decide the number of strata
+#' K <- determineK(hic_data, max_ns = 10, corr_threshold = 0.1)
 #'
 #' # Stratify data
-#' ind <- stratifyData(data, ns = 3)
+#' ind <- stratifyData(hic_data, ns = K)
 #'
-#' # Decide initial parameters
-#' init <- choosePara(data, ns = 3, ind = ind)
+#' # Select initial parameters
+#' init <- choosePara(hic_data, ns = K, ind = ind, prp = 0.7, rho = 0.15)
 #'
 #' # Fit the stratified IDR model
 #' thet.ini <- c(logit(init$mixps), init$mus, init$sigma, logit(init$rho), init$omega)
-#' res <- fit_IDR_stratified(data, ns = 3, ind = ind, thet.ini = thet.ini)
-#' }
+#' res <- fit_IDR_stratified(hic_data, ns = K, ind = ind, thet.ini = thet.ini)
 #'
 #' @export
 fit_IDR_stratified <- function(hic_data, ns, ind, thet.ini){
@@ -113,4 +118,5 @@ fit_IDR_stratified <- function(hic_data, ns, ind, thet.ini){
     IDR = IDR.all.gmcm
   ))
 }
+
 
