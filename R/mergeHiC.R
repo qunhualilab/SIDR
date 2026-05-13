@@ -1,7 +1,7 @@
 #' @title Merge two Hi-C replicates
 #'
 #' @description
-#' This function preprocesses two Hi-C replicate files of the same resolution,
+#' This function pre-processes two Hi-C replicate files of the same resolution,
 #' filters them for specified chromosomes, and merges them into a
 #' single data frame.
 #'
@@ -53,9 +53,12 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' mergeHiC("replicate1.txt", "replicate2.txt", chrI = "chr18", chrJ = "chr18")
-#' }
+#' set.seed(1)    # uses random jitter
+#' rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
+#' rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
+#'
+#' # Merge Hi-C replicates
+#' hic_data <- mergeHiC(rep1, rep2, chrI = "chr18", chrJ = "chr18")
 #'
 #' @export
 mergeHiC <- function(hic_rep1, hic_rep2, chrI, chrJ){
@@ -81,23 +84,32 @@ mergeHiC <- function(hic_rep1, hic_rep2, chrI, chrJ){
     dplyr::filter(.data$chromosomeI == chrI &
                     .data$chromosomeJ == chrJ)
 
-  hic_data <- merge(rep1, rep2, by = c("fragmentI", "fragmentJ")) %>%
-    dplyr::mutate(
-      obs1 = jitter(-log(pmax(.data$pvalue.x, .Machine$double.eps)), factor = 1e-4),
-      obs2 = jitter(-log(pmax(.data$pvalue.y, .Machine$double.eps)), factor = 1e-4),
-      dist = abs(.data$fragmentI - .data$fragmentJ) / 1000
-    ) %>%
-    dplyr::transmute(
-      chromosomeI = .data$chromosomeI.x,
-      chromosomeJ = .data$chromosomeJ.x,
-      fragmentI = .data$fragmentI,
-      fragmentJ = .data$fragmentJ,
-      pvalue1 = .data$pvalue.x,
-      pvalue2 = .data$pvalue.y,
-      obs1 = .data$obs1,
-      obs2 = .data$obs2,
-      dist = .data$dist
-    )
+  tmp <- merge(rep1, rep2, by = c("fragmentI", "fragmentJ"))
+
+  obs1 <- -log(tmp$pvalue.x)
+  obs2 <- -log(tmp$pvalue.y)
+
+  # handle Inf in obs1
+  finite_obs1 <- obs1[is.finite(obs1)]
+  obs1[is.infinite(obs1) & obs1 > 0] <- max(finite_obs1) + 1
+  obs1[is.infinite(obs1) & obs1 < 0] <- min(finite_obs1) - 1
+
+  # handle Inf in obs2
+  finite_obs2 <- obs2[is.finite(obs2)]
+  obs2[is.infinite(obs2) & obs2 > 0] <- max(finite_obs2) + 1
+  obs2[is.infinite(obs2) & obs2 < 0] <- min(finite_obs2) - 1
+
+  hic_data <- data.frame(
+    chromosomeI = tmp$chromosomeI.x,
+    chromosomeJ = tmp$chromosomeJ.x,
+    fragmentI   = tmp$fragmentI,
+    fragmentJ   = tmp$fragmentJ,
+    pvalue1     = tmp$pvalue.x,
+    pvalue2     = tmp$pvalue.y,
+    obs1        = jitter(obs1, factor = 1e-4),
+    obs2        = jitter(obs2, factor = 1e-4),
+    dist        = abs(tmp$fragmentI - tmp$fragmentJ) / 1000
+  )
 
   if (nrow(hic_data) == 0) {
     stop("No data available to perform the reproducibility analysis.")
@@ -105,4 +117,3 @@ mergeHiC <- function(hic_rep1, hic_rep2, chrI, chrJ){
 
   return(hic_data)
 }
-
