@@ -1,4 +1,4 @@
-#' @title Decide initial parameters for Hi-C reproducibility analysis.
+#' @title Decide initial parameters for Hi-C reproducibility analysis
 #'
 #' @description
 #' Compute initial parameters for the Gaussian mixture copula model used
@@ -19,29 +19,31 @@
 #' @return A list containing:
 #' \describe{
 #'   \item{mixps}{A numeric vector of reproducible proportions.}
-#'   \item{mus}{A numeric vector of mean of the reproducible group in each stratum.}
-#'   \item{rho}{Correlation coefficient for the irreproducible group.}
-#'   \item{sigma}{Standard deviation (set to 1).}
-#'   \item{omega}{A numeric vector of omega parameters.}
+#'   \item{mus}{A numeric vector of means for the reproducible component in each stratum.}
+#'   \item{rho}{Correlation coefficient for the irreproducible component.}
+#'   \item{sigma}{Standard deviation (set to 1) for the reproducible component.}
+#'   \item{omega}{A numeric vector of correlation scale parameters for the reproducible component.}
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' set.seed(1)    # uses random jitter
+#' rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
+#' rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
+#'
 #' # Merge Hi-C replicates
-#' data <- mergeHiC("rep1.txt", "rep2.txt", chrI = "chr18", chrJ = "chr18")
+#' hic_data <- mergeHiC(rep1, rep2, chrI = "chr18", chrJ = "chr18")
+#'
+#' # Decide the number of strata
+#' K <- determineK(hic_data, max_ns = 10, corr_threshold = 0.1)
 #'
 #' # Stratify data
-#' stratified_indices <- stratifyData(hic_data, ns = 3)
+#' ind <- stratifyData(hic_data, ns = K)
 #'
-#' # Decide initial parameters
-#' params <- choosePara(data, ns = 3, ind = ind, prp = 0.6, rho = 0.15)
-#' }
+#' # Select initial parameters
+#' init <- choosePara(hic_data, ns = K, ind = ind, prp = 0.7, rho = 0.15)
 #'
 #' @export
-choosePara <- function(hic_data, ns, ind, prp = 0.6, rho = 0.15) {
-
-  if (!ns %in% c(3, 4, 5))
-    stop("ns must be 3, 4, or 5.")
+choosePara <- function(hic_data, ns, ind, prp = 0.7, rho = 0.15) {
 
   if (!is.numeric(prp) || prp <= 0 || prp >= 1)
     stop("prp must be between 0 and 1.")
@@ -52,22 +54,15 @@ choosePara <- function(hic_data, ns, ind, prp = 0.6, rho = 0.15) {
   if (!is.list(ind) || length(ind) != ns)
     stop("ind must be a list of length ns.")
 
-  if (ns == 3) {
-    mixps <- c(0.70, 0.50, 0.30)
-    mus   <- c(0.80, 0.70, 0.60)
-  } else if (ns == 4) {
-    mixps <- c(0.70, 0.60, 0.30, 0.10)
-    mus   <- c(0.80, 0.70, 0.60, 0.50)
-  } else if (ns == 5) {
-    mixps <- c(0.75, 0.60, 0.45, 0.30, 0.15)
-    mus   <- c(0.80, 0.70, 0.60, 0.50, 0.40)
-  } else {
-    stop("ns must be 3, 4, or 5.")
+  mixps <- (ns:1) / (ns + 1)
+  mus <- 1.5 - 0.1 * (0:(ns - 1))
+
+  if (any(mus <= 0)) {
+    stop("All values in 'mus' must be positive.")
   }
 
   y1 <- hic_data$obs1
   y2 <- hic_data$obs2
-  p0 <- 1 - mixps
 
   omega <- numeric(ns)
 
