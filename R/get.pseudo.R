@@ -11,7 +11,7 @@
 #' @param ind A list of length \code{ns}, where each element contains
 #' the row indices corresponding to that stratum.
 #' @param mixps Numeric vector of length \code{ns},
-#' mixture proportions (\eqn{\pi_k}) for each stratum.
+#' mixture proportions (\eqn{\pi_k}) of the reproducible component for each stratum.
 #' @param mus Numeric vector of length \code{ns}, means (\eqn{\mu_k}) of
 #' the reproducible component for each stratum.
 #' @param sigma A numeric value, the standard deviation (\eqn{\sigma}) of
