@@ -78,3 +78,5 @@ get.pseudo.mix <- function (z, mixp, mu, sigma){
   invisible(quan.z)
 }
 
+
+
