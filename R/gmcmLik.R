@@ -87,3 +87,4 @@ gmcmLik <- function(y1, y2, ns, ind, thets){
   return(lik)
 }
 
+
