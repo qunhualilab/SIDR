@@ -67,3 +67,5 @@ stratifyData <- function(hic_data, ns){
 
 
 
+
+
