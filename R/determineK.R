@@ -51,3 +51,4 @@ determineK <- function(hic_data, max_ns = 10, corr_threshold = 0.1) {
     return(K)
   }
 }
+
