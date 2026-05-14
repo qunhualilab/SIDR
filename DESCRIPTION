@@ -1,16 +1,25 @@
 Package: SIDR
 Type: Package
-Title: Stratified Irreproducible Discovery Rate (SIDR) for Hi-C Data
-Version: 1.0
+Title: Stratified Irreproducible Discovery Rate for Hi-C Data
+Version: 1.0.0
 Authors@R: 
-    person("Chen", "Xue", email = "stanxuechen@gmail.com", role = c("aut", "cre"))
-Description: Implements the Stratified Irreproducible Discovery Rate (SIDR) 
-  model for assessing reproducibility of replcate Hi-C data.
+    person("Chen", "Xue",
+           email = "stanxuechen@gmail.com",
+           role = c("aut", "cre"))
+Description: A statistical model for assessing reproducibility in replicate 
+    Hi-C data. SIDR extends the standard irreproducible discovery rate 
+    framework by stratifying Hi-C interactions according to genomic distance, 
+    accommodating structured heterogeneity in replicate consistency. 
 License: GPL (>= 2.0)
 Encoding: UTF-8
 LazyData: true
-Imports: data.table, dplyr, MASS, mvtnorm, stats, rlang
+Depends: R (>= 3.5)
+Imports: data.table, dplyr, MASS, mvtnorm, rlang, stats
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Depends: 
-    R (>= 3.5)
+NeedsCompilation: no
+Packaged: 2026-05-14 00:22:35 UTC; nora
+Author: Chen Xue [aut, cre]
+Maintainer: Chen Xue <stanxuechen@gmail.com>
