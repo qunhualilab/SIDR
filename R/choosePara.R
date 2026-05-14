@@ -87,3 +87,4 @@ choosePara <- function(hic_data, ns, ind, prp = 0.7, rho = 0.15) {
   return(list(mixps = mixps, mus = mus, sigma = 1, rho = rho, omega = omega))
 }
 
+
