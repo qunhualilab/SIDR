@@ -6,7 +6,7 @@
 #' global irreproducible discovery rate (idr and IDR) for Hi-C interactions
 #' based on the estimated parameters. The computation is inspired by
 #' the IDR methodology implemented in the
-#' \href{https://bioconductor.org/packages/release/bioc/html/idr.html}{IDR package}
+#' \href{https://cran.r-project.org/web/packages/idr/index.html}{IDR package}
 #' (Li et al., 2011).
 #'
 #' @importFrom stats optim
@@ -45,9 +45,10 @@
 #' Li, Q., Brown, J. B., Huang, H., & Bickel, P. J. (2011).
 #' Measuring reproducibility of high-throughput experiments.
 #' \emph{Annals of Applied Statistics}, 5(3), 1752–1779.
-#' \url{https://bioconductor.org/packages/release/bioc/html/idr.html}
+#' \url{https://cran.r-project.org/web/packages/idr/index.html}
 #'
 #' @examples
+#' \dontrun{
 #' set.seed(1)    # uses random jitter
 #' rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
 #' rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
@@ -67,6 +68,7 @@
 #' # Fit the stratified IDR model
 #' thet.ini <- c(logit(init$mixps), init$mus, init$sigma, logit(init$rho), init$omega)
 #' res <- fit_IDR_stratified(hic_data, ns = K, ind = ind, thet.ini = thet.ini)
+#' }
 #'
 #' @export
 fit_IDR_stratified <- function(hic_data, ns, ind, thet.ini){
@@ -118,5 +120,7 @@ fit_IDR_stratified <- function(hic_data, ns, ind, thet.ini){
     IDR = IDR.all.gmcm
   ))
 }
+
+
 
 
