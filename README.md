@@ -11,7 +11,7 @@ devtools::install_github("qunhualilab/SIDR")
 2. Install the package from source:
 
 ```r
-install.packages("/PATH/TO/SOURCE/SIDR_1.0.tar.gz",repos = NULL, type = "source")
+install.packages("/PATH/TO/SOURCE/SIDR_1.0.0.tar.gz",repos = NULL, type = "source")
 ```
 
 # Input
@@ -52,10 +52,15 @@ To assess reproducibility, **SIDR** first merges the two Hi-C replicate files.
 Use the `mergeHiC` function, specifying the path to each replicate file and the chromosomes to analyze.
 
 ```r
+# uses random jitter
+set.seed(1)    
+rep1 <- system.file("extdata", "rep1.txt", package = "SIDR")
+rep2 <- system.file("extdata", "rep2.txt", package = "SIDR")
+
 # Merge two Hi-C replicate files for chromosome 18
 data <- mergeHiC(
-  "/PATH/TO/SOURCE/rep1.txt",
-  "/PATH/TO/SOURCE/rep2.txt",
+  rep1,
+  rep2,
   chrI = "chr18",
   chrJ = "chr18"
 )
@@ -64,11 +69,14 @@ Only interactions present in both replicates for the specified chromosomes are r
 
 ## Step 2: Stratify Hi-C Data by Genomic Distance
 
-Divide the merged Hi-C data into distance strata. This is required for SIDR analysis.
+Divide the merged Hi-C data into distance-defined strata. This is required for SIDR analysis.
 
 ```r
-# Divide Hi-C data into 5 strata by genomic distance
-ind <- stratifyData(data, ns = 5)
+# Decide the number of strata
+K <- determineK(data, max_ns = 10, corr_threshold = 0.1)
+
+# Divide Hi-C data into K strata by genomic distance
+ind <- stratifyData(data, ns = K)
 ```
 
 ## Step 3: Determine the initial parameters 
@@ -78,10 +86,10 @@ Compute initial parameter values for the SIDR model. You can skip this step if y
 # Determine the initial values of the parameters
 init <- choosePara(
   data, 
-  ns = 5,      # number of strata
+  ns = K,      # number of strata
   ind = ind,   # strata indices
-  prp = 0.6,   # initial proportion of reproducible interactions
-  rho = 0.15   # initial correlation
+  prp = 0.7,   # threshold for selecting top-ranked signals to estimate reproducible correlation
+  rho = 0.15   # initial irreproducible correlation 
 )
 ```
 ## Step 4: Fit the SIDR model
@@ -89,7 +97,7 @@ init <- choosePara(
 Fit the stratified IDR model using the initialized parameters.
 
 ```r
-# Prepare initial parameter vector
+# Prepare initial parameter vector 
 thet.ini <- c(
   logit(init$mixps), 
   init$mus, 
@@ -101,7 +109,7 @@ thet.ini <- c(
 # Fit the SIDR model
 result <- fit_IDR_stratified(
   data, 
-  ns = 5, 
+  ns = K, 
   ind = ind, 
   thet.ini = thet.ini
 )
