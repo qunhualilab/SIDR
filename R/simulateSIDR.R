@@ -33,6 +33,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' set.seed(456)
 #' n <- 10000
 #' ns <- 3
@@ -50,6 +51,7 @@
 #' sim_data <- simulateSIDR(n, ns, ind, mixps, mus, sigma, rho, omega)
 #' thet.ini <- c(logit(mixps), mus, sigma, logit(rho), omega)
 #' result <- fit_IDR_stratified(sim_data, ns, ind, thet.ini)
+#' }
 #'
 #' @export
 simulateSIDR <- function(n, ns, ind, mixps, mus, sigma, rho, omega){
