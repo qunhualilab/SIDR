@@ -117,3 +117,4 @@ mergeHiC <- function(hic_rep1, hic_rep2, chrI, chrJ){
 
   return(hic_data)
 }
+
