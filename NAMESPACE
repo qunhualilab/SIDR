@@ -27,3 +27,4 @@ importFrom(stats,na.omit)
 importFrom(stats,optim)
 importFrom(stats,pnorm)
 importFrom(stats,sd)
+
